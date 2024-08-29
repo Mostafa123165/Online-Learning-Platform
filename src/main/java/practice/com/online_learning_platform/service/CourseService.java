@@ -36,7 +36,7 @@ public class CourseService {
     @Transactional
     public Course create(@Valid @RequestBody RegisterCourseDto registerCourseDto) {
 
-        // check if title is unique
+        // check if email a
        if(courseRepository.existsByTitle(registerCourseDto.getTitle()))
            throw new CustomGlobalException("Title already exists");
 

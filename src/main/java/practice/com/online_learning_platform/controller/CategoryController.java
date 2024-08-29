@@ -1,5 +1,7 @@
 package practice.com.online_learning_platform.controller;
 
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,7 +15,8 @@ import practice.com.online_learning_platform.dto.response.ResponseMessageDto;
 import practice.com.online_learning_platform.entity.Category;
 import practice.com.online_learning_platform.service.CategoryService;
 
-@RestController
+@Tag(name = "Category")
+@RestController(value = "Category")
 @RequestMapping("/api/categories")
 @RequiredArgsConstructor
 public class CategoryController {
