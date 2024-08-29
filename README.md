@@ -1,0 +1,3 @@
+- **Swagger Documentation**:
+    - Access the Swagger UI to explore the API endpoints:
+        - URL: `http://localhost:8080/swagger-ui/index.html`
