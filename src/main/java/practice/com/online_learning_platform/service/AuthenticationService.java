@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class UserManagementService {
+public class AuthenticationService {
 
     final private UserRepository userRepository;
     final private StudentRepository studentRepository;
@@ -95,22 +95,4 @@ public class UserManagementService {
         adminRepository.save(admin);
     }
 
-    public Instructor findInstructorById(Long id) {
-        return instructorRepository.findById(id).orElseThrow(
-                () ->  new CustomGlobalException(
-                        "The Instructor with ID [" +
-                                id +
-                                "] does not exist. Please provide a valid instructor.")
-        );
-    }
-
-
-    public Student findStudentById(Long id) {
-        return studentRepository.findById(id).orElseThrow(
-                () ->  new CustomGlobalException(
-                        "The Student with ID [" +
-                                id +
-                                "] does not exist. Please provide a valid student.")
-        );
-    }
 }

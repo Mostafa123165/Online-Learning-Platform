@@ -12,19 +12,19 @@ import org.springframework.web.bind.annotation.RestController;
 import practice.com.online_learning_platform.dto.request.RegistrationRequestDto;
 import practice.com.online_learning_platform.dto.response.ResponseMessageDto;
 import practice.com.online_learning_platform.entity.User;
-import practice.com.online_learning_platform.service.UserManagementService;
+import practice.com.online_learning_platform.service.AuthenticationService;
 
-@Tag(name = "user-api")
+@Tag(name = "auth-api")
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-public class UserManagementController {
+public class AuthenticationController {
 
-    private final UserManagementService userManagementService;
+    private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
     public ResponseEntity<ResponseMessageDto> registration(@Valid @RequestBody RegistrationRequestDto registrationRequestDto) {
-        User user = userManagementService.registerUser(registrationRequestDto);
+        User user = authenticationService.registerUser(registrationRequestDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED.value())
                 .body(ResponseMessageDto

@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
-import practice.com.online_learning_platform.Repository.CategoryRepository;
 import practice.com.online_learning_platform.Repository.CourseRepository;
 import practice.com.online_learning_platform.Repository.StudentRepository;
 import practice.com.online_learning_platform.Repository.TagRepository;
@@ -24,11 +23,10 @@ import java.util.Set;
 public class CourseService {
 
     private final CourseRepository courseRepository;
-    private final CategoryRepository categoryRepository;
     private final TagRepository tagRepository;
-    private final UserManagementService userManagementService;
     private final CategoryService categoryServiceEnum;
     private final StudentRepository studentRepository;
+    private final UserService userService;
 
 
     private final RegisterCourseMapper registerCourseMapper;
@@ -40,7 +38,7 @@ public class CourseService {
 
         Category category =  categoryServiceEnum.findCategoryById(registerCourseDto.getCategoryId());
 
-        Instructor instructor = userManagementService.findInstructorById(registerCourseDto.getInstructorId());
+        Instructor instructor = userService.findInstructorById(registerCourseDto.getInstructorId());
 
         Set<Tag> tags = getTags(registerCourseDto);
 
@@ -74,7 +72,7 @@ public class CourseService {
     public void enrollUserInCourse(Long courseId, Long studentId) {
 
         Course course = findCourseById(courseId);
-        userManagementService.findStudentById(studentId);
+        userService.findStudentById(studentId);
 
         if(studentRepository.existsByStudentIdAndCourseId(studentId, courseId) == 1) {
             throw new CustomGlobalException("Enrollment failed: The student already enrolled in this course");
@@ -93,5 +91,13 @@ public class CourseService {
         return courseRepository.findById(courseId).orElseThrow(
                 () ->  new CustomGlobalException("The course with ID [" + courseId + "] does not exist.")
         );
+    }
+
+    public void addRatingReview() {}
+
+    public void addingEligibilityReview() {}
+
+    public void deleteReviewById() {
+
     }
 }
