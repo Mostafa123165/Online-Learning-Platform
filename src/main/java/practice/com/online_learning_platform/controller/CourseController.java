@@ -6,17 +6,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import practice.com.online_learning_platform.dto.request.RegisterCourseDto;
 import practice.com.online_learning_platform.dto.response.ResponseMessageDto;
 import practice.com.online_learning_platform.entity.Course;
-import practice.com.online_learning_platform.entity.Student;
 import practice.com.online_learning_platform.service.CourseService;
 
-@Tag(name = "Course")
+@Tag(name = "Course-api")
 @RestController
 @RequestMapping("/api/courses")
 @RequiredArgsConstructor
@@ -28,7 +24,6 @@ public class CourseController{
     public ResponseEntity<ResponseMessageDto> create(@Valid @RequestBody RegisterCourseDto createCourseDto) {
 
        Course course =  courseService.create(createCourseDto);
-
         return ResponseEntity
                 .status(HttpStatus.OK.value())
                 .body(ResponseMessageDto
@@ -37,7 +32,18 @@ public class CourseController{
                         .message("Course adding successfully with id - " + course.getId())
                         .build());
     }
-    public void enrollment(Student student) {
 
+    @PostMapping("/{courseId}/enroll/{studentId}")
+    public ResponseEntity<ResponseMessageDto> enrollUserInCourse(@PathVariable Long courseId,
+                                   @PathVariable Long studentId) {
+
+        courseService.enrollUserInCourse(courseId,studentId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ResponseMessageDto
+                        .builder()
+                        .status(HttpStatus.OK.value())
+                        .message("You have successfully enrolled in this course")
+                        .build());
     }
 }

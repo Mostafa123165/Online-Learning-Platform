@@ -96,9 +96,21 @@ public class UserManagementService {
     }
 
     public Instructor findInstructorById(Long id) {
-
-        return instructorRepository.findById(id).orElse(null);
+        return instructorRepository.findById(id).orElseThrow(
+                () ->  new CustomGlobalException(
+                        "The Instructor with ID [" +
+                                id +
+                                "] does not exist. Please provide a valid instructor.")
+        );
     }
 
 
+    public Student findStudentById(Long id) {
+        return studentRepository.findById(id).orElseThrow(
+                () ->  new CustomGlobalException(
+                        "The Student with ID [" +
+                                id +
+                                "] does not exist. Please provide a valid student.")
+        );
+    }
 }

@@ -1,5 +1,6 @@
 package practice.com.online_learning_platform.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import practice.com.online_learning_platform.dto.response.ResponseMessageDto;
 import practice.com.online_learning_platform.entity.User;
 import practice.com.online_learning_platform.service.UserManagementService;
 
+@Tag(name = "user-api")
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor

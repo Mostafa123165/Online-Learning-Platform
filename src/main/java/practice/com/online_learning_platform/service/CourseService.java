@@ -7,15 +7,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import practice.com.online_learning_platform.Repository.CategoryRepository;
 import practice.com.online_learning_platform.Repository.CourseRepository;
+import practice.com.online_learning_platform.Repository.StudentRepository;
 import practice.com.online_learning_platform.Repository.TagRepository;
 import practice.com.online_learning_platform.dto.request.RegisterCourseDto;
 import practice.com.online_learning_platform.dto.request.TagRequestDto;
-import practice.com.online_learning_platform.entity.Category;
-import practice.com.online_learning_platform.entity.Course;
-import practice.com.online_learning_platform.entity.Instructor;
-import practice.com.online_learning_platform.entity.Tag;
+import practice.com.online_learning_platform.entity.*;
 import practice.com.online_learning_platform.exceptionHandler.CustomGlobalException;
 import practice.com.online_learning_platform.mapper.RegisterCourseMapper;
+import practice.com.online_learning_platform.utility.enums.CourseStatus;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -29,6 +28,7 @@ public class CourseService {
     private final TagRepository tagRepository;
     private final UserManagementService userManagementService;
     private final CategoryService categoryServiceEnum;
+    private final StudentRepository studentRepository;
 
 
     private final RegisterCourseMapper registerCourseMapper;
@@ -36,33 +36,25 @@ public class CourseService {
     @Transactional
     public Course create(@Valid @RequestBody RegisterCourseDto registerCourseDto) {
 
-        // check if email a
-       if(courseRepository.existsByTitle(registerCourseDto.getTitle()))
-           throw new CustomGlobalException("Title already exists");
+        validateUniqueTitle(registerCourseDto.getTitle());
 
-       // check if category existed
-        Category category = categoryServiceEnum.findCategoryById(registerCourseDto.getCategoryId());
-        if(category == null)
-            throw new CustomGlobalException(
-                    "The category with ID [" +
-                    registerCourseDto.getCategoryId() +
-                    "] does not exist. Please provide a valid category.");
+        Category category =  categoryServiceEnum.findCategoryById(registerCourseDto.getCategoryId());
 
-        // check if Instructor existed
         Instructor instructor = userManagementService.findInstructorById(registerCourseDto.getInstructorId());
-        if(instructor == null)
-            throw new CustomGlobalException("The specified instructor does not exist. Please provide a valid instructor ID.");
 
-        // check if tag is existed before and get it if is existed
         Set<Tag> tags = getTags(registerCourseDto);
 
         Course course = registerCourseMapper.mapToCourseFromRegisterCourse(registerCourseDto, tags, instructor,category);
 
-        System.out.println(course);
-        System.out.println();
+        courseRepository.save(course);
 
-        // else add new tag
-        return null;
+        return course;
+    }
+
+    private void validateUniqueTitle(String title) {
+        if (courseRepository.existsByTitle(title)) {
+            throw new CustomGlobalException("Title already exists");
+        }
     }
 
     private Set<Tag> getTags(RegisterCourseDto registerCourseDto) {
@@ -78,5 +70,28 @@ public class CourseService {
         return tags;
     }
 
+    @Transactional
+    public void enrollUserInCourse(Long courseId, Long studentId) {
 
+        Course course = findCourseById(courseId);
+        userManagementService.findStudentById(studentId);
+
+        if(studentRepository.existsByStudentIdAndCourseId(studentId, courseId) == 1) {
+            throw new CustomGlobalException("Enrollment failed: The student already enrolled in this course");
+        }
+
+        if(course.getStatus() == CourseStatus.Approved) {
+            studentRepository.enrollStudentInCourse(studentId, courseId);
+        }
+        else {
+            throw new CustomGlobalException("Enrollment failed: The course has not been approved.");
+        }
+
+    }
+
+    public Course findCourseById(Long courseId) {
+        return courseRepository.findById(courseId).orElseThrow(
+                () ->  new CustomGlobalException("The course with ID [" + courseId + "] does not exist.")
+        );
+    }
 }

@@ -16,7 +16,13 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
     public Category findCategoryById(Long id) {
-        return categoryRepository.findById(id).orElse(null);
+
+        return categoryRepository.findById(id).orElseThrow(
+                () -> new CustomGlobalException(
+                        "The category with ID [" +
+                                id +
+                                "] does not exist. Please provide a valid category.")
+        );
     }
 
     @Transactional

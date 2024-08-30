@@ -44,7 +44,8 @@ public class Course {
     @JoinColumn(name = "instructor_id")
     private Instructor instructor ;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,
+                           CascadeType.REFRESH, CascadeType.DETACH})
     @JoinTable(
             name = "course_tag",
             joinColumns = @JoinColumn(name = "course_id"),
